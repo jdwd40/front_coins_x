@@ -1,12 +1,15 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Bell, User, LogOut, Settings } from 'lucide-react';
 import { clsx } from 'clsx';
+import { useAuth } from '@/hooks/useAuth';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const navigation = [
     { name: 'Dashboard', href: '/', icon: '📊' },
@@ -66,7 +69,9 @@ const Header = () => {
                 className="flex items-center space-x-2 p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
               >
                 <User className="w-5 h-5" />
-                <span className="hidden sm:block text-sm font-medium">John Doe</span>
+                <span className="hidden sm:block text-sm font-medium">
+                  {user?.username || 'User'}
+                </span>
               </button>
 
               {/* User Dropdown */}
@@ -89,7 +94,14 @@ const Header = () => {
                     <span>Settings</span>
                   </Link>
                   <hr className="my-1 border-gray-200 dark:border-gray-700" />
-                  <button className="flex items-center space-x-2 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                  <button 
+                    onClick={async () => {
+                      await logout();
+                      navigate('/login');
+                      setIsUserMenuOpen(false);
+                    }}
+                    className="flex items-center space-x-2 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left"
+                  >
                     <LogOut className="w-4 h-4" />
                     <span>Sign Out</span>
                   </button>

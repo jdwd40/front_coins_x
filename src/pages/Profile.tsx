@@ -1,8 +1,40 @@
 import { useState } from 'react';
 import { User, Shield, Bell, CreditCard, LogOut, Camera } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { showSuccess } from '@/utils/notifications';
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications' | 'billing'>('profile');
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  // Debug: log the user object
+  console.log('Profile user:', user);
+
+  // If user is missing, show an error message
+  if (!user || !user.username || !user.email) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">Profile Error</h2>
+        <p className="text-gray-700 dark:text-gray-300 mb-4">Unable to load your profile information. Please try logging out and logging in again.</p>
+        <button
+          onClick={async () => {
+            try {
+              await logout();
+              showSuccess('Successfully logged out');
+              navigate('/login');
+            } catch (error) {
+              console.error('Logout error:', error);
+            }
+          }}
+          className="bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors"
+        >
+          Go to Login
+        </button>
+      </div>
+    );
+  }
 
   const tabs = [
     { id: 'profile', name: 'Profile', icon: User },
@@ -28,15 +60,20 @@ const Profile = () => {
             <div className="text-center">
               <div className="relative inline-block">
                 <div className="w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto">
-                  JD
+                  {user?.username?.charAt(0).toUpperCase() || 'U'}
                 </div>
                 <button className="absolute bottom-0 right-0 p-2 bg-gray-800 dark:bg-gray-700 rounded-full text-white hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
                   <Camera className="w-4 h-4" />
                 </button>
               </div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mt-4">John Doe</h2>
-              <p className="text-gray-600 dark:text-gray-400">john.doe@example.com</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Member since January 2024</p>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mt-4">{user?.username || 'User'}</h2>
+              <p className="text-gray-600 dark:text-gray-400">{user?.email || 'No email'}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Member since {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'Unknown'}
+              </p>
+              <p className="text-sm text-green-600 dark:text-green-400 mt-1">
+                Funds: £{Number(user?.funds).toFixed(2) || '0.00'}
+              </p>
             </div>
 
             <div className="mt-6 space-y-4">
@@ -54,7 +91,18 @@ const Profile = () => {
               </div>
             </div>
 
-            <button className="w-full mt-6 flex items-center justify-center space-x-2 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors">
+            <button 
+              onClick={async () => {
+                try {
+                  await logout();
+                  showSuccess('Successfully logged out');
+                  navigate('/login');
+                } catch (error) {
+                  console.error('Logout error:', error);
+                }
+              }}
+              className="w-full mt-6 flex items-center justify-center space-x-2 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
+            >
               <LogOut className="w-4 h-4" />
               <span>Sign Out</span>
             </button>
@@ -117,7 +165,7 @@ const Profile = () => {
                       </label>
                       <input
                         type="email"
-                        defaultValue="john.doe@example.com"
+                        defaultValue={user?.email || ''}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
