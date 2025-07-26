@@ -125,3 +125,4 @@ The application uses a custom color palette optimized for trading:
 ## License
 
 This project is licensed under the MIT License.
+# front_coins_x
