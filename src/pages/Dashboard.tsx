@@ -1,4 +1,5 @@
 import { TrendingUp, TrendingDown, Activity, DollarSign, Users, BarChart3 } from 'lucide-react';
+import CoinList from '@/components/market/CoinList';
 
 const Dashboard = () => {
   const stats = [
@@ -122,6 +123,12 @@ const Dashboard = () => {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Coin List */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
+        <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Live Market Data</h2>
+        <CoinList />
       </div>
 
       {/* System Status */}

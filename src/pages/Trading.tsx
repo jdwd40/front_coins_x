@@ -1,15 +1,9 @@
 import { useState } from 'react';
 import { TrendingUp, TrendingDown, DollarSign, BarChart3 } from 'lucide-react';
+import CoinList from '@/components/market/CoinList';
 
 const Trading = () => {
   const [activeTab, setActiveTab] = useState<'buy' | 'sell'>('buy');
-
-  const coins = [
-    { id: '1', name: 'Bitcoin', symbol: 'BTC', price: 45000, change: 2.5, volume: '2.4B' },
-    { id: '2', name: 'Ethereum', symbol: 'ETH', price: 3200, change: -1.2, volume: '1.8B' },
-    { id: '3', name: 'Cardano', symbol: 'ADA', price: 1.25, change: 5.8, volume: '890M' },
-    { id: '4', name: 'Solana', symbol: 'SOL', price: 95, change: 3.2, volume: '650M' },
-  ];
 
   return (
     <div className="space-y-6">
@@ -201,77 +195,7 @@ const Trading = () => {
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">Available Coins</h2>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-700">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Coin
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Price
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      24h Change
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Volume
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {coins.map((coin) => (
-                    <tr key={coin.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                            {coin.symbol.charAt(0)}
-                          </div>
-                          <div className="ml-3">
-                            <div className="text-sm font-medium text-gray-900 dark:text-white">
-                              {coin.name}
-                            </div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
-                              {coin.symbol}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                        £{coin.price.toLocaleString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`text-sm font-medium flex items-center ${
-                            coin.change >= 0
-                              ? 'text-green-600 dark:text-green-400'
-                              : 'text-red-600 dark:text-red-400'
-                          }`}
-                        >
-                          {coin.change >= 0 ? (
-                            <TrendingUp className="w-4 h-4 mr-1" />
-                          ) : (
-                            <TrendingDown className="w-4 h-4 mr-1" />
-                          )}
-                          {coin.change >= 0 ? '+' : ''}{coin.change}%
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                        £{coin.volume}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">
-                          Trade
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <CoinList />
           </div>
         </div>
       </div>
