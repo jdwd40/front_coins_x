@@ -15,6 +15,7 @@ import Register from './pages/Register';
 import ErrorHandlingDemo from './components/ui/ErrorHandlingDemo';
 import { AuthTest } from './components/auth/AuthTest';
 import ApiTest from './pages/ApiTest';
+import CoinDetail from './pages/CoinDetail';
 import './styles/globals.css';
 
 // Create a client
@@ -49,10 +50,11 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               
-              {/* Demo Route */}
-              <Route path="/demo" element={<ErrorHandlingDemo />} />
-              <Route path="/auth-test" element={<AuthTest />} />
-              <Route path="/api-test" element={<ApiTest />} />
+                          {/* Demo Route */}
+            <Route path="/demo" element={<ErrorHandlingDemo />} />
+            <Route path="/auth-test" element={<AuthTest />} />
+            <Route path="/api-test" element={<ApiTest />} />
+            <Route path="/coin/:coinId" element={<CoinDetail />} />
               
               {/* Protected Routes with Layout */}
               <Route path="/" element={

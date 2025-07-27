@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCoins } from '@/hooks/useMarketData';
 import { Coin } from '@/types/market.types';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
@@ -13,7 +14,12 @@ interface CoinListProps {
 }
 
 const CoinList: React.FC<CoinListProps> = ({ filters }) => {
+  const navigate = useNavigate();
   const { data: coins, isLoading, error } = useCoins(filters);
+
+  const handleCoinClick = (coinId: number) => {
+    navigate(`/coin/${coinId}`);
+  };
 
   if (isLoading) {
     return (
@@ -78,21 +84,22 @@ const CoinList: React.FC<CoinListProps> = ({ filters }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
       {/* Header */}
-      <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900">Cryptocurrency Market</h2>
-        <p className="text-sm text-gray-600 mt-1">
+      <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Cryptocurrency Market</h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
           {coins.length} coins available for trading
         </p>
       </div>
 
       {/* Coin List */}
-      <div className="divide-y divide-gray-200">
+      <div className="divide-y divide-gray-200 dark:divide-gray-700">
         {coins.map((coin: Coin) => (
           <div
             key={coin.coin_id}
-            className="px-6 py-4 hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+            className="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150 cursor-pointer"
+            onClick={() => handleCoinClick(coin.coin_id)}
           >
             <div className="flex items-center justify-between">
               {/* Coin Info */}
@@ -106,9 +113,9 @@ const CoinList: React.FC<CoinListProps> = ({ filters }) => {
 
                 {/* Coin Details */}
                 <div>
-                  <h3 className="font-semibold text-gray-900">{coin.name}</h3>
-                  <p className="text-sm text-gray-500">{coin.symbol}</p>
-                  <p className="text-xs text-gray-400">Founder: {coin.founder}</p>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">{coin.name}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{coin.symbol}</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500">Founder: {coin.founder}</p>
                 </div>
               </div>
 
@@ -116,10 +123,10 @@ const CoinList: React.FC<CoinListProps> = ({ filters }) => {
               <div className="flex items-center space-x-8">
                 {/* Current Price */}
                 <div className="text-right">
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-gray-900 dark:text-white">
                     {formatPrice(coin.current_price)}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     Supply: {coin.circulating_supply.toLocaleString()}
                   </p>
                 </div>
@@ -132,15 +139,15 @@ const CoinList: React.FC<CoinListProps> = ({ filters }) => {
                       {coin.price_change_24h > 0 ? '+' : ''}{coin.price_change_24h.toFixed(2)}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-500">24h change</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">24h change</p>
                 </div>
 
                 {/* Market Cap */}
                 <div className="text-right">
-                  <p className="font-medium text-gray-900">
+                  <p className="font-medium text-gray-900 dark:text-white">
                     {formatMarketCap(coin.market_cap)}
                   </p>
-                  <p className="text-xs text-gray-500">Market Cap</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Market Cap</p>
                 </div>
               </div>
             </div>
@@ -149,8 +156,8 @@ const CoinList: React.FC<CoinListProps> = ({ filters }) => {
       </div>
 
       {/* Footer */}
-      <div className="bg-gray-50 px-6 py-3 border-t border-gray-200">
-        <p className="text-xs text-gray-500 text-center">
+      <div className="bg-gray-50 dark:bg-gray-700 px-6 py-3 border-t border-gray-200 dark:border-gray-600">
+        <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
           Data updates in real-time • Last updated: {new Date().toLocaleTimeString()}
         </p>
       </div>

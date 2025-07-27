@@ -85,4 +85,8 @@ export interface MarketStatusResponse {
   success: boolean;
   data: MarketStatus;
   message?: string;
+}
+
+export interface CoinDetailResponse {
+  coin: Coin;
 } 

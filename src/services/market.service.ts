@@ -8,6 +8,7 @@ import {
   PriceHistoryResponse,
   MarketStatusResponse,
   MarketDataResponse,
+  CoinDetailResponse,
   MarketFilters,
   MarketStats,
 } from '@/types/market.types';
@@ -52,13 +53,8 @@ class MarketService {
   // Get a specific coin by ID
   async getCoin(coinId: string): Promise<Coin> {
     try {
-      const response = await apiService.get<{ success: boolean; data: Coin; message?: string }>(`/api/coins/${coinId}`);
-      
-      if (response.success && response.data) {
-        return response.data;
-      }
-      
-      throw new Error(response.message || 'Failed to fetch coin');
+      const response = await apiService.get<CoinDetailResponse>(`/api/coins/${coinId}`);
+      return response.coin;
     } catch (error) {
       console.error('Error fetching coin:', error);
       throw error;
