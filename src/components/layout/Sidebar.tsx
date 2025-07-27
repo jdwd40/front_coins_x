@@ -1,15 +1,17 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, TrendingUp } from 'lucide-react';
 import { clsx } from 'clsx';
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navigation = [
     { name: 'Dashboard', href: '/', icon: '📊' },
     { name: 'Trading', href: '/trading', icon: '💰' },
+    { name: 'Buy & Sell', href: '/buy-sell', icon: '💱' },
     { name: 'Portfolio', href: '/portfolio', icon: '📈' },
     { name: 'Profile', href: '/profile', icon: '👤' },
   ];
@@ -77,11 +79,11 @@ const Sidebar = () => {
           <div className="p-4 border-t border-gray-200 dark:border-gray-700">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Quick Actions</h3>
             <div className="space-y-2">
-              <button className="w-full px-3 py-2 bg-green-600 text-white text-xs font-medium rounded-md hover:bg-green-700 transition-colors">
-                💰 Buy
-              </button>
-              <button className="w-full px-3 py-2 bg-red-600 text-white text-xs font-medium rounded-md hover:bg-red-700 transition-colors">
-                📉 Sell
+              <button 
+                onClick={() => navigate('/buy-sell')}
+                className="w-full px-3 py-2 bg-green-600 text-white text-xs font-medium rounded-md hover:bg-green-700 transition-colors"
+              >
+                💰 Buy & Sell
               </button>
             </div>
           </div>
@@ -92,16 +94,11 @@ const Sidebar = () => {
           <div className="p-4 border-t border-gray-200 dark:border-gray-700">
             <div className="space-y-2">
               <button 
+                onClick={() => navigate('/buy-sell')}
                 className="w-full p-2 bg-green-600 text-white text-xs font-medium rounded-md hover:bg-green-700 transition-colors"
-                title="Buy"
+                title="Buy & Sell"
               >
                 💰
-              </button>
-              <button 
-                className="w-full p-2 bg-red-600 text-white text-xs font-medium rounded-md hover:bg-red-700 transition-colors"
-                title="Sell"
-              >
-                📉
               </button>
             </div>
           </div>
