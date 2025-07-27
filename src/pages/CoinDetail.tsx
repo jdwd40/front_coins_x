@@ -9,10 +9,10 @@ import Skeleton from '@/components/ui/LoadingSkeleton';
 const CoinDetail: React.FC = () => {
   const { coinId } = useParams<{ coinId: string }>();
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
   
   const { data: coin, isLoading, error } = useCoin(coinId || '');
-  const { data: holding, isLoading: holdingLoading } = useCoinHolding(coinId ? parseInt(coinId) : 0);
+  const { data: holding } = useCoinHolding(coinId ? parseInt(coinId) : 0);
 
   if (isLoading) {
     return (

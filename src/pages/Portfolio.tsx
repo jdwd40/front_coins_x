@@ -1,17 +1,20 @@
-import React from 'react';
+
 import { useNavigate } from 'react-router-dom';
 import { usePortfolio, useHoldings, useBalance } from '@/hooks/usePortfolio';
-import { TrendingUp, TrendingDown, DollarSign, BarChart3, PieChart, ArrowRight } from 'lucide-react';
+import { useTransactions } from '@/hooks/useTransactions';
+import { TrendingUp, TrendingDown, DollarSign, BarChart3, PieChart } from 'lucide-react';
 import Skeleton from '@/components/ui/LoadingSkeleton';
+import { formatCurrency, formatDate } from '@/utils/analytics';
 
 const Portfolio = () => {
   const navigate = useNavigate();
   const { data: portfolio, isLoading: portfolioLoading, error: portfolioError } = usePortfolio();
   const { data: holdings, isLoading: holdingsLoading, error: holdingsError } = useHoldings();
   const { data: balance, isLoading: balanceLoading, error: balanceError } = useBalance();
+  const { transactions, isLoading: transactionsLoading, error: transactionsError } = useTransactions({ limit: 5 });
 
-  const isLoading = portfolioLoading || holdingsLoading || balanceLoading;
-  const error = portfolioError || holdingsError || balanceError;
+  const isLoading = portfolioLoading || holdingsLoading || balanceLoading || transactionsLoading;
+  const error = portfolioError || holdingsError || balanceError || transactionsError;
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-GB', {
@@ -90,7 +93,7 @@ const Portfolio = () => {
           </p>
         </div>
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
-          <p className="text-red-800 dark:text-red-300">Error loading portfolio: {error.message}</p>
+          <p className="text-red-800 dark:text-red-300">Error loading portfolio: {error instanceof Error ? error.message : error}</p>
         </div>
       </div>
     );
@@ -249,32 +252,45 @@ const Portfolio = () => {
 
           {/* Recent Transactions */}
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">Recent Transactions</h2>
+              <button
+                onClick={() => navigate('/transaction-history')}
+                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
+              >
+                View All
+              </button>
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {[
-                  { type: 'buy', coin: 'Bitcoin', amount: '0.05 BTC', value: '£2,250', date: '2 hours ago' },
-                  { type: 'sell', coin: 'Ethereum', amount: '0.5 ETH', value: '£1,600', date: '1 day ago' },
-                  { type: 'buy', coin: 'Cardano', amount: '1000 ADA', value: '£1,250', date: '3 days ago' },
-                ].map((transaction, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-3 h-3 rounded-full ${transaction.type === 'buy' ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          {transaction.type === 'buy' ? 'Bought' : 'Sold'} {transaction.coin}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{transaction.date}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{transaction.amount}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{transaction.value}</p>
-                    </div>
+                                 {transactions && transactions.length > 0 ? (
+                   transactions.map((transaction) => (
+                     <div key={transaction.transaction_id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                       <div className="flex items-center space-x-3">
+                         <div className={`w-3 h-3 rounded-full ${transaction.type === 'BUY' ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                         <div>
+                           <p className="text-sm font-medium text-gray-900 dark:text-white">
+                             {transaction.type === 'BUY' ? 'Bought' : 'Sold'} {transaction.coin_name}
+                           </p>
+                           <p className="text-xs text-gray-500 dark:text-gray-400">{formatDate(transaction.created_at)}</p>
+                         </div>
+                       </div>
+                       <div className="text-right">
+                         <p className="text-sm font-medium text-gray-900 dark:text-white">
+                           {Number(transaction.quantity).toFixed(6)} {transaction.symbol}
+                         </p>
+                         <p className="text-xs text-gray-500 dark:text-gray-400">
+                           {formatCurrency(Number(transaction.total_amount))}
+                         </p>
+                       </div>
+                     </div>
+                   ))
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500 dark:text-gray-400">No recent transactions</p>
+                    <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Start trading to see your transaction history</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>

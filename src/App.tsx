@@ -18,6 +18,7 @@ import ApiTest from './pages/ApiTest';
 import CoinDetail from './pages/CoinDetail';
 import BuySell from './pages/BuySell';
 import Sell from './pages/Sell';
+import { TransactionHistoryPage } from './pages/TransactionHistoryPage';
 import './styles/globals.css';
 
 // Create a client
@@ -86,6 +87,13 @@ function App() {
                 <ProtectedRoute>
                   <Layout>
                     <Profile />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/transaction-history" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <TransactionHistoryPage />
                   </Layout>
                 </ProtectedRoute>
               } />

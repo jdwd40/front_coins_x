@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, DollarSign, BarChart3 } from 'lucide-react';
+import { TrendingUp, DollarSign, BarChart3 } from 'lucide-react';
 import { useCoins } from '@/hooks/useMarketData';
 import { useAuth } from '@/context/AuthContext';
 import { transactionService } from '@/services/transaction.service';

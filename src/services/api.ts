@@ -132,10 +132,12 @@ class ApiService {
     return localStorage.getItem('auth_token');
   }
 
+  /*
   private setStoredTokens(token: string, refreshToken: string) {
     localStorage.setItem('auth_token', token);
     localStorage.setItem('refresh_token', refreshToken);
   }
+  */
 
   private clearStoredAuth() {
     localStorage.removeItem('auth_token');

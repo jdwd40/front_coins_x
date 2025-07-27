@@ -1,18 +1,16 @@
 // Trading Types
 export interface Transaction {
-  id: string;
-  user_id: string;
-  coin_id: string;
+  transaction_id: string;
+  user_id: number;
+  coin_id: number;
   coin_name: string;
-  coin_symbol: string;
-  type: 'buy' | 'sell';
-  quantity: number;
-  price: number;
-  total_amount: number;
-  fee: number;
-  status: 'pending' | 'completed' | 'failed' | 'cancelled';
+  symbol: string;
+  type: 'BUY' | 'SELL';
+  quantity: number | string;
+  price: number | string;
+  total_amount: number | string;
   created_at: string;
-  updated_at: string;
+  status?: string;
 }
 
 export interface Order {
