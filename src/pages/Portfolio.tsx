@@ -166,10 +166,10 @@ const Portfolio = () => {
                       Asset
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Quantity
+                      Total
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Avg Price
+                      Current Price
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Current Value
@@ -206,7 +206,7 @@ const Portfolio = () => {
                                                           {holding.quantity.toFixed(8)} {holding.coin_symbol}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                          {formatPrice(holding.average_buy_price)}
+                          {formatPrice(holding.current_price)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                           {formatPrice(holding.current_value)}
