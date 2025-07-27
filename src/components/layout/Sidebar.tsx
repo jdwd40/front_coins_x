@@ -79,11 +79,17 @@ const Sidebar = () => {
           <div className="p-4 border-t border-gray-200 dark:border-gray-700">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Quick Actions</h3>
             <div className="space-y-2">
-              <button 
+                            <button
                 onClick={() => navigate('/buy-sell')}
                 className="w-full px-3 py-2 bg-green-600 text-white text-xs font-medium rounded-md hover:bg-green-700 transition-colors"
               >
-                💰 Buy & Sell
+                💰 Buy
+              </button>
+              <button
+                onClick={() => navigate('/sell')}
+                className="w-full px-3 py-2 bg-red-600 text-white text-xs font-medium rounded-md hover:bg-red-700 transition-colors"
+              >
+                📉 Sell
               </button>
             </div>
           </div>

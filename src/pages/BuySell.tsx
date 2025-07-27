@@ -16,7 +16,6 @@ const BuySell: React.FC = () => {
   
   // State for coin selection and transaction
   const [selectedCoin, setSelectedCoin] = useState<Coin | null>(null);
-  const [transactionType, setTransactionType] = useState<'buy' | 'sell'>('buy');
   const [amount, setAmount] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   
@@ -54,17 +53,9 @@ const BuySell: React.FC = () => {
 
     const amountValue = parseFloat(amount);
     const fee = 2.25;
-
-    if (transactionType === 'buy') {
-      const quantity = amountValue / selectedCoin.current_price;
-      const totalCost = amountValue + fee;
-      return { quantity, totalCost };
-    } else {
-      // For sell, amount represents quantity
-      const quantity = amountValue;
-      const sellValue = quantity * selectedCoin.current_price;
-      return { quantity, totalCost: sellValue };
-    }
+    const quantity = amountValue / selectedCoin.current_price;
+    const totalCost = amountValue + fee;
+    return { quantity, totalCost };
   };
 
   // Handle transaction
@@ -111,44 +102,23 @@ const BuySell: React.FC = () => {
 
     setIsProcessing(true);
     try {
-      if (transactionType === 'buy') {
-        const response = await transactionService.buyCoins({
-          user_id: user.user_id,
-          coin_id: selectedCoin.coin_id,
-          amount: confirmationData.amount,
-        });
+      const response = await transactionService.buyCoins({
+        user_id: user.user_id,
+        coin_id: selectedCoin.coin_id,
+        amount: confirmationData.amount,
+      });
 
-        if (response.status === 'success') {
-          setNotification({
-            isOpen: true,
-            type: 'success',
-            title: 'Buy Transaction Successful',
-            message: `Successfully purchased ${confirmationData.quantity.toFixed(8)} ${selectedCoin.symbol}`,
-          });
-          setAmount('');
-          setIsConfirmationOpen(false);
-        } else {
-          throw new Error(response.message);
-        }
+      if (response.status === 'success') {
+        setNotification({
+          isOpen: true,
+          type: 'success',
+          title: 'Buy Transaction Successful',
+          message: `Successfully purchased ${confirmationData.quantity.toFixed(8)} ${selectedCoin.symbol}`,
+        });
+        setAmount('');
+        setIsConfirmationOpen(false);
       } else {
-        const response = await transactionService.sellCoins({
-          user_id: user.user_id,
-          coin_id: selectedCoin.coin_id,
-          amount: confirmationData.quantity,
-        });
-
-        if (response.status === 'success') {
-          setNotification({
-            isOpen: true,
-            type: 'success',
-            title: 'Sell Transaction Successful',
-            message: `Successfully sold ${confirmationData.quantity.toFixed(8)} ${selectedCoin.symbol}`,
-          });
-          setAmount('');
-          setIsConfirmationOpen(false);
-        } else {
-          throw new Error(response.message);
-        }
+        throw new Error(response.message);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Transaction failed';
@@ -242,7 +212,7 @@ const BuySell: React.FC = () => {
         isOpen={isConfirmationOpen}
         onClose={() => setIsConfirmationOpen(false)}
         onConfirm={handleTransactionConfirm}
-        type={transactionType}
+        type="buy"
         coinName={selectedCoin?.name || ''}
         coinSymbol={selectedCoin?.symbol || ''}
         amount={confirmationData.amount}
@@ -269,7 +239,13 @@ const BuySell: React.FC = () => {
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Buy & Sell</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Buy Coins</h1>
+        <button
+          onClick={() => navigate('/sell')}
+          className="ml-auto bg-red-600 text-white py-2 px-4 rounded-md font-medium hover:bg-red-700 transition-colors"
+        >
+          📉 Sell Coins
+        </button>
       </div>
 
       {!isAuthenticated ? (
@@ -355,66 +331,23 @@ const BuySell: React.FC = () => {
           <div className="space-y-4">
             {selectedCoin ? (
               <>
-                {/* Transaction Type Toggle */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Transaction Type</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={() => setTransactionType('buy')}
-                      className={`py-2 px-4 rounded-md font-medium transition-colors ${
-                        transactionType === 'buy'
-                          ? 'bg-green-600 text-white'
-                          : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                      }`}
-                    >
-                      Buy
-                    </button>
-                    <button
-                      onClick={() => setTransactionType('sell')}
-                      className={`py-2 px-4 rounded-md font-medium transition-colors ${
-                        transactionType === 'sell'
-                          ? 'bg-red-600 text-white'
-                          : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                      }`}
-                    >
-                      Sell
-                    </button>
-                  </div>
-                </div>
-
                 {/* Transaction Form */}
-                <div className={`rounded-lg p-6 ${
-                  transactionType === 'buy' 
-                    ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
-                    : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
-                }`}>
-                  <h3 className={`text-lg font-semibold mb-4 ${
-                    transactionType === 'buy'
-                      ? 'text-green-800 dark:text-green-300'
-                      : 'text-red-800 dark:text-red-300'
-                  }`}>
-                    {transactionType === 'buy' ? 'Buy' : 'Sell'} {selectedCoin.symbol}
+                <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-6 border border-green-200 dark:border-green-800">
+                  <h3 className="text-lg font-semibold text-green-800 dark:text-green-300 mb-4">
+                    Buy {selectedCoin.symbol}
                   </h3>
                   
                   <div className="space-y-4">
                     <div>
-                      <label className={`block text-sm font-medium mb-2 ${
-                        transactionType === 'buy'
-                          ? 'text-green-700 dark:text-green-300'
-                          : 'text-red-700 dark:text-red-300'
-                      }`}>
-                        {transactionType === 'buy' ? 'Amount (£)' : 'Quantity'}
+                      <label className="block text-sm font-medium text-green-700 dark:text-green-300 mb-2">
+                        Amount (£)
                       </label>
                       <input
                         type="number"
-                        placeholder={transactionType === 'buy' ? '0.00' : '0.00000000'}
+                        placeholder="0.00"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:border-transparent ${
-                          transactionType === 'buy'
-                            ? 'border-green-300 dark:border-green-600 focus:ring-green-500'
-                            : 'border-red-300 dark:border-red-600 focus:ring-red-500'
-                        }`}
+                        className="w-full px-3 py-2 border border-green-300 dark:border-green-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500"
                       />
                     </div>
 
@@ -428,14 +361,9 @@ const BuySell: React.FC = () => {
                           </span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">
-                            {transactionType === 'buy' ? 'Quantity:' : 'Amount:'}
-                          </span>
+                          <span className="text-gray-600 dark:text-gray-400">Quantity:</span>
                           <span className="font-medium text-gray-900 dark:text-white">
-                            {transactionType === 'buy' 
-                              ? `${(parseFloat(amount) / selectedCoin.current_price).toFixed(8)} ${selectedCoin.symbol}`
-                              : formatPrice(parseFloat(amount) * selectedCoin.current_price)
-                            }
+                            {(parseFloat(amount) / selectedCoin.current_price).toFixed(8)} {selectedCoin.symbol}
                           </span>
                         </div>
                         <div className="flex justify-between text-sm">
@@ -446,10 +374,7 @@ const BuySell: React.FC = () => {
                         <div className="flex justify-between font-semibold">
                           <span className="text-gray-900 dark:text-white">Total:</span>
                           <span className="text-gray-900 dark:text-white">
-                            {transactionType === 'buy' 
-                              ? formatPrice(parseFloat(amount) + 2.25)
-                              : formatPrice(parseFloat(amount) * selectedCoin.current_price - 2.25)
-                            }
+                            {formatPrice(parseFloat(amount) + 2.25)}
                           </span>
                         </div>
                       </div>
@@ -458,13 +383,9 @@ const BuySell: React.FC = () => {
                     <button
                       onClick={handleTransaction}
                       disabled={!amount || parseFloat(amount) <= 0}
-                      className={`w-full py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-                        transactionType === 'buy'
-                          ? 'bg-green-600 text-white hover:bg-green-700'
-                          : 'bg-red-600 text-white hover:bg-red-700'
-                      }`}
+                      className="w-full bg-green-600 text-white py-3 px-4 rounded-md font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {transactionType === 'buy' ? 'Buy' : 'Sell'} {selectedCoin.symbol}
+                      Buy {selectedCoin.symbol}
                     </button>
                   </div>
                 </div>

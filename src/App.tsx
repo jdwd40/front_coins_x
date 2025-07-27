@@ -17,6 +17,7 @@ import { AuthTest } from './components/auth/AuthTest';
 import ApiTest from './pages/ApiTest';
 import CoinDetail from './pages/CoinDetail';
 import BuySell from './pages/BuySell';
+import Sell from './pages/Sell';
 import './styles/globals.css';
 
 // Create a client
@@ -55,8 +56,9 @@ function App() {
             <Route path="/demo" element={<ErrorHandlingDemo />} />
             <Route path="/auth-test" element={<AuthTest />} />
             <Route path="/api-test" element={<ApiTest />} />
-            <Route path="/coin/:coinId" element={<CoinDetail />} />
-            <Route path="/buy-sell" element={<BuySell />} />
+                          <Route path="/coin/:coinId" element={<CoinDetail />} />
+              <Route path="/buy-sell" element={<BuySell />} />
+              <Route path="/sell" element={<Sell />} />
               
               {/* Protected Routes with Layout */}
               <Route path="/" element={

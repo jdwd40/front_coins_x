@@ -2,15 +2,17 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCoin } from '@/hooks/useMarketData';
 import { useAuth } from '@/context/AuthContext';
+import { useCoinHolding } from '@/hooks/usePortfolio';
 import { TrendingUp, TrendingDown, Minus, ArrowLeft, DollarSign, BarChart3, Users, Activity } from 'lucide-react';
 import Skeleton from '@/components/ui/LoadingSkeleton';
 
 const CoinDetail: React.FC = () => {
   const { coinId } = useParams<{ coinId: string }>();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   
   const { data: coin, isLoading, error } = useCoin(coinId || '');
+  const { data: holding, isLoading: holdingLoading } = useCoinHolding(coinId ? parseInt(coinId) : 0);
 
   if (isLoading) {
     return (
@@ -141,15 +143,59 @@ const CoinDetail: React.FC = () => {
       {/* Content */}
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
         <div className="p-6">
-          {/* Buy/Sell Action Button */}
+          {/* Buy/Sell Action Buttons */}
           {isAuthenticated && (
-            <div className="mb-6">
-              <button
-                onClick={() => navigate('/buy-sell')}
-                className="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:from-green-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-              >
-                💰 Buy & Sell {coin.symbol}
-              </button>
+            <div className="mb-6 space-y-4">
+              {/* Portfolio Information */}
+              {holding && (
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-2">Your Holdings</h4>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-blue-600 dark:text-blue-400">Quantity:</span>
+                      <span className="ml-2 font-medium text-blue-800 dark:text-blue-300">
+                        {holding.quantity.toFixed(8)} {coin.symbol}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-blue-600 dark:text-blue-400">Value:</span>
+                      <span className="ml-2 font-medium text-blue-800 dark:text-blue-300">
+                        {formatPrice(holding.current_value)}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-blue-600 dark:text-blue-400">P&L:</span>
+                      <span className={`ml-2 font-medium ${holding.profit_loss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {holding.profit_loss >= 0 ? '+' : ''}{formatPrice(holding.profit_loss)}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-blue-600 dark:text-blue-400">P&L %:</span>
+                      <span className={`ml-2 font-medium ${holding.profit_loss_percentage >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {holding.profit_loss_percentage >= 0 ? '+' : ''}{holding.profit_loss_percentage.toFixed(2)}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button
+                  onClick={() => navigate('/buy-sell')}
+                  className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-green-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                >
+                  💰 Buy {coin.symbol}
+                </button>
+                {holding && holding.quantity > 0 && (
+                  <button
+                    onClick={() => navigate('/sell')}
+                    className="w-full bg-red-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-red-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    📉 Sell {coin.symbol}
+                  </button>
+                )}
+              </div>
             </div>
           )}
 
